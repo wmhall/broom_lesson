@@ -380,42 +380,42 @@ The author of broom() has an excellent [article](http://arxiv.org/abs/1412.3565)
 Here is a table of the statistical objects supported by `broom`.
 
 
-package    class                                                                                              tidy   augment   glance 
----------  -------------------------------------------------------------------------------------------------  -----  --------  -------
-base       data.frame                                                                                         X      X         X      
-base       table                                                                                              X      NA        NA     
-stats      anova, aov, density, ftable, manova, pairwise.htest, spec, ts, TukeyHSD                            X      NA        NA     
-stats      kmeans, lm, nls                                                                                    X      X         X      
-stats      smooth.spline                                                                                      NA     X         X      
-stats      Arima, htest                                                                                       X      NA        X      
-stats      loess                                                                                              NA     X         NA     
-stats      glm                                                                                                NA     NA        X      
-bbmle      mle2                                                                                               X      NA        NA     
-biglm      biglm                                                                                              X      NA        X      
-binGroup   binDesign                                                                                          X      NA        X      
-binGroup   binWidth                                                                                           X      NA        NA     
-boot       boot                                                                                               X      NA        NA     
-btergm     btergm, roc                                                                                        X      NA        NA     
-ergm       ergm                                                                                               X      NA        X      
-gam        gam                                                                                                X      NA        X      
-gamlss     gamlss                                                                                             X      NA        NA     
-geepack    geeglm                                                                                             X      NA        NA     
-glmnet     cv.glmnet, glmnet                                                                                  X      NA        X      
-Hmisc      rcorr                                                                                              X      NA        NA     
-lfe        felm                                                                                               X      X         X      
-lme4       merMod                                                                                             X      X         X      
-lmtest     coeftest                                                                                           X      NA        NA     
-maps       map                                                                                                X      NA        NA     
-MASS       fitdistr, ridgelm                                                                                  X      NA        X      
-MASS       rlm                                                                                                NA     NA        X      
-multcomp   cld, confint.glht, glht, summary.glht                                                              X      NA        NA     
-nlme       lme                                                                                                X      X         X      
-nnet       multinom                                                                                           X      NA        X      
-plm        plm                                                                                                X      X         X      
-sp         Line, Lines, Polygon, Polygons, SpatialLinesDataFrame, SpatialPolygons, SpatialPolygonsDataFrame   X      NA        NA     
-survival   aareg, cch, pyears, survexp, survfit                                                               X      NA        X      
-survival   coxph, survreg                                                                                     X      X         X      
-zoo        zoo                                                                                                X      NA        NA     
+|package  |class                                                                                            |tidy |augment |glance |
+|:--------|:------------------------------------------------------------------------------------------------|:----|:-------|:------|
+|base     |data.frame                                                                                       |X    |X       |X      |
+|base     |table                                                                                            |X    |NA      |NA     |
+|stats    |anova, aov, density, ftable, manova, pairwise.htest, spec, ts, TukeyHSD                          |X    |NA      |NA     |
+|stats    |kmeans, lm, nls                                                                                  |X    |X       |X      |
+|stats    |smooth.spline                                                                                    |NA   |X       |X      |
+|stats    |Arima, htest                                                                                     |X    |NA      |X      |
+|stats    |loess                                                                                            |NA   |X       |NA     |
+|stats    |glm                                                                                              |NA   |NA      |X      |
+|bbmle    |mle2                                                                                             |X    |NA      |NA     |
+|biglm    |biglm                                                                                            |X    |NA      |X      |
+|binGroup |binDesign                                                                                        |X    |NA      |X      |
+|binGroup |binWidth                                                                                         |X    |NA      |NA     |
+|boot     |boot                                                                                             |X    |NA      |NA     |
+|btergm   |btergm, roc                                                                                      |X    |NA      |NA     |
+|ergm     |ergm                                                                                             |X    |NA      |X      |
+|gam      |gam                                                                                              |X    |NA      |X      |
+|gamlss   |gamlss                                                                                           |X    |NA      |NA     |
+|geepack  |geeglm                                                                                           |X    |NA      |NA     |
+|glmnet   |cv.glmnet, glmnet                                                                                |X    |NA      |X      |
+|Hmisc    |rcorr                                                                                            |X    |NA      |NA     |
+|lfe      |felm                                                                                             |X    |X       |X      |
+|lme4     |merMod                                                                                           |X    |X       |X      |
+|lmtest   |coeftest                                                                                         |X    |NA      |NA     |
+|maps     |map                                                                                              |X    |NA      |NA     |
+|MASS     |fitdistr, ridgelm                                                                                |X    |NA      |X      |
+|MASS     |rlm                                                                                              |NA   |NA      |X      |
+|multcomp |cld, confint.glht, glht, summary.glht                                                            |X    |NA      |NA     |
+|nlme     |lme                                                                                              |X    |X       |X      |
+|nnet     |multinom                                                                                         |X    |NA      |X      |
+|plm      |plm                                                                                              |X    |X       |X      |
+|sp       |Line, Lines, Polygon, Polygons, SpatialLinesDataFrame, SpatialPolygons, SpatialPolygonsDataFrame |X    |NA      |NA     |
+|survival |aareg, cch, pyears, survexp, survfit                                                             |X    |NA      |X      |
+|survival |coxph, survreg                                                                                   |X    |X       |X      |
+|zoo      |zoo                                                                                              |X    |NA      |NA     |
 
 *This table was made with code from `broom`'s author.
 

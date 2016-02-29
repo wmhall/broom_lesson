@@ -2,7 +2,9 @@
 title: "broom_lesson"
 author: "William Hall"
 date: "February 26, 2016"
-output: html_document
+output:
+  html_document:
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
@@ -252,7 +254,7 @@ Here is a table of the statistical objects supported by `broom`.
 ```{r, echo = F}
 broom_supported_objects <- 
 readr::read_csv("broom_supported_objects.csv")
-knitr::kable(broom_supported_objects)
+knitr::kable(broom_supported_objects, format = "markdown")
 ```
 
 *This table was made with code from `broom`'s author.

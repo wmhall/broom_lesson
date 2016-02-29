@@ -1,0 +1,292 @@
+---
+title: "broom_lesson"
+author: "William Hall"
+date: "February 26, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Why *tidy* model objects?
+
+One of the main advantages of `r` is it's ability to fit a variety of statistical models to data. Unfortunately, the majority of modeling tools in `r` return objects that are not useful for subsquent explortation. For example, outputs from statical tools are often simply printed to the screen rather than returned as an object. `broom` aims to make objects from common statistical tools more useful by making them into *tidy* dataframes. 
+
+Data is *tidy* if it is in a table that follows three rules: 
+
+*  Each variable forms one column
+*  Each observation forms one row
+*  Each type of observational unit forms one table
+
+Making model objects tidy allows the objects to be handed to other packages such as `dplyr` and `ggplot2` that are very useful for faciltating further exploration of your statistical model.  
+
+To demonstrate how `broom` works I will use the `gampminder` package. The `gapminder` package provides a data set that has data on life expectancy, GDP per capita, and population by country from 1952 to 2007 in increments of 5 years.
+
+Let's start by loading the packages that we will use today. 
+
+```{r, message=FALSE, warning=FALSE }
+library(gapminder)
+library(broom)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+gapminder
+```
+
+##Fitting a model
+
+Imagine that we wanted to explore the relationship between life expectancy and GDP. To do so we can fit a linear regression using `lm()` in which life expectancy is predicted from GDP. Note, that throughout this lesson I will use `lm()` to demonstrate `broom`'s functionality; however, `broom` works with a number of other modeling functions. For a full list see the table at the end of this document. 
+
+```{r}
+fm <- lm(lifeExp ~ gdpPercap, data = gapminder)
+```
+
+
+##Exploring model outputs
+
+Now that we have fit our model we want to explore the results. Start by taking a closer look at the fm object with r's `str()` function.
+
+###base r functions
+
+```{r, eval =F}
+str(fm)
+```
+
+`str()` shows us that fm is a pretty impenetrable looking list. Lucky for us base r provides us with a number of useful helper functions that let us pull out information from the object returned by `lm()`.
+
+First, the `summary()` function lets us take a look at the results of our model.
+
+```{r}
+summary(fm)
+```
+
+The `summary()` function has one very large drawback: information is printed to the screen rather than returned as an object. This makes it difficult to do subsequent data manipulation on the output returned by your model.
+
+Based r provides other helper functions that try to overcome this problem. For example, the `coef()` function returns a vector of the estimated coefficients in your model. 
+
+```{r}
+coef(fm)
+```
+
+However, the information returned by `coef()` is pretty limited and needs to be combined with other base r helper functions to really tell you anything useful about the model that you fit. 
+
+###broom()
+
+`broom` provides a set of functions that tidy the messy output from a number of common modeling packages in order to facilitate exploration of your model output. 
+
+`broom` provides three tidying functions: `tidy()`, `glance()`, and `augment()`. Each function takes messy model output and returns a dataframe. 
+
+
+####tidy()
+
+`tidy()` provides a statistical summary of your model as a dataframe. In a regression, tidy() provides coefficient estimates, standard errors, t statistics, and p-values. 
+
+```{r}
+tidy(fm)
+```
+
+####glance()
+
+`glance()` gives you a one row dataframe that summarizes your model. Typically, `glance()` will give you a number of model fit indicators. 
+
+```{r}
+glance(fm)
+```
+
+```{r, echo=F, eval=F}
+#Notes on the columns returned by glance.
+# r.squared: percent of variance explained in y by x. adj.r.squared is the ratio of the sum of squares for the distance between the observed data and the mean divided by the sum of squares of the distance between the regression line and the observed data. 
+# adj.r.squared: r.squared adjusted for the degrees of freedom in your model
+#sigma: square root of SSr (denom of F-STAT). SSr is the sum of the squared difference for the differences between the observed data and the regression line. 
+#statistic: F statistic: the differences between the regression line and the mean line, divided by the difference between the regression line and the observed points (i.e. the residuals) 
+#p.value:p values associated with the F-statistics. 
+#df: degrees of freedom for the coefficients
+#logLik: log likelihoods
+#AIC: Akaike Information Criterion : relative quality of the fit of your data
+#BIC: Bayesian Information Criterion: relative quality of the fit of your data
+#deviance: goodness of fit test relative to the null model 
+#df residual: degrees of freedom for the residual
+
+#take home: most of what is returned here are fit estiamtes that compare you model to some null model, in the case of regression this is an intercept only model.
+```
+
+
+####augment()
+
+`augment()` provides observation level information about your model. In a regression, this includes predicted values, residuals, and indicators of outlying observations. 
+
+```{r}
+augment(fm) %>% head()
+```
+
+```{r, eval =F, echo =F}
+#Notes about the columns returned by augment
+#lifeExp: observed y val
+#gdpPercap: observed x val
+#.fitted: predicted y value
+#.se.fit: standard error of the predicted value
+#.resid: distance between predicted y value and observed y value 
+#.hat: diagnals of the hat matrix that indicate leverage. i.e. the influence an observed y value has on the predicted values.
+#.sigma: ?
+#.cooksd: index of how much the regression plane is being shifted by an idividual point
+#.std.resid: standarized version of the resid column
+```
+
+
+
+The important thing to note about `tidy()`, `glance()`, and `augment()` is that they return dataframes. Once you have your model output in a dataframe it is very easy to do further data exploration with tools like dplyr and `gpplot2`. 
+
+```{r}
+augment(fm) %>% class
+```
+
+For example, let's look at how well the model fits for observations with very low values for life expectancy. To do this we can use `dplyr`'s `filter()` function. 
+
+```{r}
+augment(fm) %>% filter(lifeExp < 30)
+```
+
+###Challenge 1
+
+Isolate rows of data in the model we fit that have standardized residuals +- 2.5 standard deviations from the mean (i.e outlying observations). For a bonus, try out the `augment_columns()` function to figure out which observations (i.e. country/year) these large residuals correspond to.   
+
+##Fitting multiple models
+
+###Using `dpylr`'s `group_by()` to fit many models
+
+Imagine that you wanted to fit a regression model for each country in the gapminder dataset. To do this we would need to fit 142 different models!
+
+```{r}
+unique(gapminder$country) %>% length()
+```
+
+We can do this quickly by combining dplyr’s `group_by()` and `do()` with broom's `tidy()` function. 
+
+```{r}
+my_results <- 
+gapminder %>% 
+  group_by(country) %>% 
+  do(tidy(lm(lifeExp ~ gdpPercap, data = .)))
+
+my_results
+```
+
+
+```{r comparing model, eval = F, echo=F}
+my_results <- 
+gapminder %>% 
+  group_by(country) %>% 
+  do(glance(lm(lifeExp ~ gdpPercap, data = .))) %>% 
+  ungroup() %>% 
+  arrange(r.squared)
+```
+
+
+
+###Filtering model outputs
+
+We can then quickly isolate coefficients of interest using `dplyr`'s `filter()` function. 
+
+For example, `filter()` lets you quickly isolate the coefficients for the relationship between life expectancy and GDP that were significantly different from zero.
+
+```{r}
+my_results %>% 
+  filter(term != "(Intercept)" & p.value <.05) %>% 
+  ungroup %>% 
+  arrange(-estimate)
+```
+
+###Adding confidence intervals
+
+Finally, adding confidence intervals to the coefficient estimates returned by your model is made easy with broom's `tidy()` function. 
+
+```{r}
+gapminder %>% 
+  group_by(country) %>% 
+  do(tidy(lm(lifeExp ~ gdpPercap, data = .), conf.int = T))
+```
+
+###Challenge 2
+
+For each continent, find out how many countries have a non-significant relationship between life expectancy and GDP. 
+
+##Visualizing model output
+
+###Fit a model
+
+Finally, combining `broom` and `ggplot2` makes it very easy to quickly visualize your model output. 
+
+Imagine that you want to visualize the relationship between life expectancy and GDP across the last 60 years. You can do this with the gapminder data. Let's start by fitting separate models of the relationship between these two variable for each year that is in the gapminder dataset. Note, that we will ask `tidy()` to return confidence intervals as we will use them in our graph.
+
+```{r}
+my_results_to_viz <- 
+  gapminder %>% 
+  group_by(year) %>%
+  do(tidy(lm(lifeExp ~ gdpPercap, data = .), conf.int =T))
+```
+
+###Visualize the model
+
+Next, we will pipe the tidy dataframe returned by `tidy()` into `ggplot2`. 
+
+```{r}
+my_results_to_viz %>% 
+filter(term != "(Intercept)") %>% 
+  ggplot(aes(y = estimate, x = factor(year))) + geom_point() + 
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high))
+```
+
+
+##Further reading
+
+The author of broom() has an excellent [article](http://arxiv.org/abs/1412.3565) on arXiv that gives you a lot more detail about things you can do with broom().
+
+
+##Table of objects that can be made tidy with broom*
+
+Here is a table of the statistical objects supported by `broom`.
+
+```{r, echo = F}
+broom_supported_objects <- 
+readr::read_csv("broom_supported_objects.csv")
+knitr::kable(broom_supported_objects)
+```
+
+*This table was made with code from `broom`'s author.
+
+##Challenge solutions
+
+### Challenge 1
+
+Using `augment()` with `dplyr`'s filter() function you quickly isolate outlying data point in your model.
+
+```{r}
+augment(fm) %>% 
+  filter(.std.resid < -2.5 | .std.resid > 2.5) %>% 
+  arrange(.std.resid)
+```
+
+`augment_columns()` is a more useful version of `augment()` as it adds the output of augment to the dataset that your model was fit.
+
+```{r}
+augment_columns(fm, data = gapminder) %>% 
+  filter(.std.resid < -2.5 | .std.resid > 2.5) %>% 
+  arrange(.std.resid)
+```
+
+
+### Challenge 2 
+
+Using `tidy()` in combination with `dplyr` you can easily isolate coefficients with p values greater than .05. Then employing `dplyr`'s `summarise()` function allows you to count up how many coefficients meet this criteria. 
+
+```{r}
+gapminder %>%  
+  group_by(continent, country) %>% 
+  do(tidy(lm(lifeExp ~ gdpPercap, data = .))) %>% 
+  filter(term !="(Intercept)" & p.value >.05) %>% 
+  group_by(continent) %>% 
+  summarise(n_count = n())
+```

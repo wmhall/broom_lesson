@@ -1,0 +1,35 @@
+package,class,tidy,augment,glance
+base,data.frame,X,X,X
+base,table,X,,
+stats,"anova, aov, density, ftable, manova, pairwise.htest, spec, ts, TukeyHSD",X,,
+stats,"kmeans, lm, nls",X,X,X
+stats,smooth.spline,,X,X
+stats,"Arima, htest",X,,X
+stats,loess,,X,
+stats,glm,,,X
+bbmle,mle2,X,,
+biglm,biglm,X,,X
+binGroup,binDesign,X,,X
+binGroup,binWidth,X,,
+boot,boot,X,,
+btergm,"btergm, roc",X,,
+ergm,ergm,X,,X
+gam,gam,X,,X
+gamlss,gamlss,X,,
+geepack,geeglm,X,,
+glmnet,"cv.glmnet, glmnet",X,,X
+Hmisc,rcorr,X,,
+lfe,felm,X,X,X
+lme4,merMod,X,X,X
+lmtest,coeftest,X,,
+maps,map,X,,
+MASS,"fitdistr, ridgelm",X,,X
+MASS,rlm,,,X
+multcomp,"cld, confint.glht, glht, summary.glht",X,,
+nlme,lme,X,X,X
+nnet,multinom,X,,X
+plm,plm,X,X,X
+sp,"Line, Lines, Polygon, Polygons, SpatialLinesDataFrame, SpatialPolygons, SpatialPolygonsDataFrame",X,,
+survival,"aareg, cch, pyears, survexp, survfit",X,,X
+survival,"coxph, survreg",X,X,X
+zoo,zoo,X,,
